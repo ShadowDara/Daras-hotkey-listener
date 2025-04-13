@@ -21,6 +21,9 @@ def create_config(path):
     except OSError as e:
         print(f'Error while creating the file! {e}')
 
+def watch_hotkeys():
+    pass
+
 # main function
 def main(path):
     while True:
