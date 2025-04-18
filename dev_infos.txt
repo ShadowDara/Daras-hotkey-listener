@@ -10,7 +10,7 @@ to reinstall requirements:
 ->  pip install -r requirements.txt
 
 to package the app:
-->  pyinstaller --onefile --icon=data/Icon.jpeg Daras_PyToolBox.py
+->  pyinstaller --onefile --icon=Dara-3.ico Daras_hotkey_listener.py
 
 if not installed:
 ->  pip install pyinstaller
