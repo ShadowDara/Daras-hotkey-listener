@@ -27,3 +27,11 @@ and add your commands which be executed on the hotkey run.
 `run =` is equal to a terminal run
 
 Other options will be added soon!
+
+## Logic
+
+I would recommend to use this tool to run another script on a hotkey press
+and not save to much data into the `config.ini` file.
+
+## Contribute
+feel free to contribute to this Repository
