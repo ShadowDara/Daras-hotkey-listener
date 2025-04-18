@@ -16,14 +16,11 @@ console = Console()
 cfg_file_name = 'config.ini'
 cfg_file_content = """# config file for Easy Hotkey Listener by Shadowdara
 [hotkeys]
-hotkey1 = ctrl+shift+q
+hotkey1 = strg+t
 hotkey2 = ctrl+shift+w
 
 [hotkey1]
-action = Show message for hotkey1
-
-[hotkey2]
-action = Show message for hotkey2
+run = sta.cmd
 """
 
 # Funktionen
