@@ -21,6 +21,9 @@ hotkey2 = ctrl+shift+w
 
 [hotkey1]
 run = sta.cmd
+
+[hotkey2]
+run = start msedge
 """
 
 # Funktionen
