@@ -1,6 +1,7 @@
 import os
 import sys
 import configparser
+import subprocess
 from rich.console import Console
 from rich.table import Table
 from rich.progress import Progress
@@ -30,7 +31,7 @@ run = start msedge
 def create_config(path):
     """Erstellt eine neue Konfigurationsdatei mit Hotkeys und Aktionen."""
     try:
-        with open(os.path.join(path, cfg_file_name), 'wt', encoding='UTF-8') as cfg_file:
+        with open(path, 'wt', encoding='UTF-8') as cfg_file:
             cfg_file.write(cfg_file_content)
         console.print("[bold green]Config file successfully created![/bold green]")
 
@@ -42,7 +43,7 @@ def load_hotkeys(path):
     hotkeys = []
     try:
         config = configparser.ConfigParser()
-        config.read(os.path.join(path, cfg_file_name))
+        config.read(path)
 
         console.print(f"[bold cyan]Config sections:[/bold cyan] {config.sections()}")
 
@@ -72,16 +73,33 @@ def display_loaded_hotkeys(hotkeys):
     else:
         console.print("[bold red]No hotkeys found in the config file.[/bold red]")
 
-# Hauptfunktion
-def main(path):
+def get_config_path():
+    """Gibt den Pfad zur Konfigurationsdatei im Unterordner des EXE-Namens zurück."""
+    if getattr(sys, 'frozen', False):
+        base_path = os.path.dirname(sys.executable)
+    else:
+        base_path = os.path.dirname(os.path.abspath(__file__))
+
+    exe_name = os.path.splitext(os.path.basename(sys.argv[0]))[0]
+
+    config_folder = os.path.join(base_path, exe_name)
+
+    if not os.path.exists(config_folder):
+        os.makedirs(config_folder)
+
+    return os.path.join(config_folder, cfg_file_name)
+
+def main():
+    config_file_path = get_config_path()
+
     error_shown = False
     config_loaded = False
 
     while not config_loaded:
         try:
-            # Versuchen, die Konfigurationsdatei zu öffnen
-            with open(os.path.join(path, cfg_file_name), 'r', encoding='UTF-8') as cfg_file:
+            with open(config_file_path, 'r', encoding='UTF-8') as cfg_file:
                 console.print("[bold green]Config file found![/bold green]")
+
                 config_loaded = True
 
         except FileNotFoundError as e:
@@ -91,19 +109,16 @@ def main(path):
                 sys.exit(1)
             else:
                 console.print(f"[bold red]Error: {e} -> Config file not found! Creating a new one now...[/bold red]")
-                create_config(path)
+                create_config(config_file_path)
                 error_shown = True
 
-    hotkeys = load_hotkeys(path)
+    hotkeys = load_hotkeys(config_file_path)
 
     display_loaded_hotkeys(hotkeys)
 
-    watch_hotkey.main(hotkeys, path, cfg_file_name)
+    watch_hotkey.main(hotkeys, config_file_path)
 
-# Ausführung starten
 if __name__ == '__main__':
     console.print("[bold cyan]Easy Hotkey Listener in Python by Shadowdara[/bold cyan]\n")
 
-    file_path = os.path.dirname(os.path.abspath(__file__))
-
-    main(file_path)
+    main()
