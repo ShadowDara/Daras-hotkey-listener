@@ -1,8 +1,16 @@
 import os
 import sys
 import configparser
+from rich.console import Console
+from rich.table import Table
+from rich.progress import Progress
+from rich.panel import Panel
+from rich.text import Text
+from time import sleep
 
 import watch_hotkey
+
+console = Console()
 
 # Variablen
 cfg_file_name = 'config.ini'
@@ -24,10 +32,10 @@ def create_config(path):
     try:
         with open(os.path.join(path, cfg_file_name), 'wt', encoding='UTF-8') as cfg_file:
             cfg_file.write(cfg_file_content)
-        print("Config file successfully created!")
+        console.print("[bold green]Config file successfully created![/bold green]")
 
     except OSError as e:
-        print(f'Error while creating the file! {e}')
+        console.print(f'[bold red]Error while creating the file! {e}[/bold red]')
 
 def load_hotkeys(path):
     """Lädt Hotkeys aus der Konfigurationsdatei."""
@@ -36,29 +44,33 @@ def load_hotkeys(path):
         config = configparser.ConfigParser()
         config.read(os.path.join(path, cfg_file_name))
 
-        # Debugging-Ausgabe
-        print(f"Config sections: {config.sections()}")
+        console.print(f"[bold cyan]Config sections:[/bold cyan] {config.sections()}")
 
         # Hotkeys aus der Konfigurationsdatei lesen
         if 'hotkeys' in config:
             for key, value in config.items('hotkeys'):
                 hotkeys.append((key, value))
         else:
-            print("No 'hotkeys' section found in the config file.")
+            console.print("[bold yellow]No 'hotkeys' section found in the config file.[/bold yellow]")
 
     except Exception as e:
-        print(f"Error loading hotkeys from config file: {e}")
+        console.print(f"[bold red]Error loading hotkeys from config file: {e}[/bold red]")
 
     return hotkeys
 
 def display_loaded_hotkeys(hotkeys):
     """Zeigt alle geladenen Hotkeys zu Beginn an."""
     if hotkeys:
-        print("Loaded hotkeys:")
+        table = Table(title="Loaded Hotkeys", border_style="blue")
+        table.add_column("Hotkey Name", style="bold yellow")
+        table.add_column("Hotkey Combination", style="bold green")
+
         for hotkey_name, hotkey_combination in hotkeys:
-            print(f"{hotkey_name}: {hotkey_combination}")
+            table.add_row(hotkey_name, hotkey_combination)
+
+        console.print(table)
     else:
-        print("No hotkeys found in the config file.")
+        console.print("[bold red]No hotkeys found in the config file.[/bold red]")
 
 # Hauptfunktion
 def main(path):
@@ -69,16 +81,16 @@ def main(path):
         try:
             # Versuchen, die Konfigurationsdatei zu öffnen
             with open(os.path.join(path, cfg_file_name), 'r', encoding='UTF-8') as cfg_file:
-                print("Config file found!")
+                console.print("[bold green]Config file found![/bold green]")
                 config_loaded = True
 
         except FileNotFoundError as e:
             if error_shown:
-                print("Error: This does not work as intended!\nPlease report the error on GitHub!\n\nExiting now with Exit Code 1!")
-                input('...')
+                console.print("[bold red]Error: This does not work as intended! Please report the error on GitHub![/bold red]")
+                input('[bold red]Press Enter to exit...[/bold red]')
                 sys.exit(1)
             else:
-                print(f"Error: {e} -> Config file not found!\nCreating a new one now...")
+                console.print(f"[bold red]Error: {e} -> Config file not found! Creating a new one now...[/bold red]")
                 create_config(path)
                 error_shown = True
 
@@ -90,7 +102,7 @@ def main(path):
 
 # Ausführung starten
 if __name__ == '__main__':
-    print("Easy Hotkey Listener in Python by Shadowdara\n")
+    console.print("[bold cyan]Easy Hotkey Listener in Python by Shadowdara[/bold cyan]\n")
 
     file_path = os.path.dirname(os.path.abspath(__file__))
 

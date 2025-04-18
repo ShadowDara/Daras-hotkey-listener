@@ -1,0 +1,16 @@
+Dev Infos
+
+to start the python programm correctly, run:
+->  start-app.bat
+
+to save requirements to file:
+->  pip freeze > requirements.txt
+
+to reinstall requirements:
+->  pip install -r requirements.txt
+
+to package the app:
+->  pyinstaller --onefile --icon=data/Icon.jpeg Daras_PyToolBox.py
+
+if not installed:
+->  pip install pyinstaller
